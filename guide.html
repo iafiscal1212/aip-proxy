@@ -222,38 +222,68 @@ sudo apt install python3 python3-pip</code></pre>
 
         <div class="step">
             <span class="step-number">3</span> <strong>Arranca el proxy</strong>
-
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab(event, 'antigravity')">Antigravity</div>
-                <div class="tab" onclick="switchTab(event, 'openai')">OpenAI</div>
-                <div class="tab" onclick="switchTab(event, 'gemini')">Gemini</div>
-                <div class="tab" onclick="switchTab(event, 'cursor')">Cursor</div>
-            </div>
-
-            <div id="antigravity" class="tab-content active">
-                <pre><code>aip-proxy start --target https://generativelanguage.googleapis.com --port 8090</code></pre>
-                <p style="margin-top:10px; color:#999">Antigravity usa la API de Gemini por defecto.</p>
-            </div>
-            <div id="openai" class="tab-content">
-                <pre><code>aip-proxy start --target https://api.openai.com/v1 --port 8090</code></pre>
-            </div>
-            <div id="gemini" class="tab-content">
-                <pre><code>aip-proxy start --target https://generativelanguage.googleapis.com --port 8090</code></pre>
-            </div>
-            <div id="cursor" class="tab-content">
-                <pre><code>aip-proxy start --target https://api.openai.com/v1 --port 8090</code></pre>
-            </div>
+            <p style="margin-top:8px; color:#999">Abre una terminal y ejecuta:</p>
+            <pre><code>aip-proxy start --target https://generativelanguage.googleapis.com --port 8090</code></pre>
+            <p style="margin-top:10px; color:#999">Deja esta terminal abierta. Veras un banner confirmando que el proxy esta activo.</p>
         </div>
 
         <div class="step">
             <span class="step-number">4</span> <strong>Configura tu IDE</strong>
-            <p style="margin-top:8px">Cambia la URL del API en los ajustes de tu IDE:</p>
-            <pre><code><span class="comment"># En vez de:</span>
-https://api.openai.com/v1
 
-<span class="comment"># Pon:</span>
-<span class="highlight">http://localhost:8090/v1</span></code></pre>
-            <p style="margin-top:8px; color:#999">Tu API key sigue igual, el proxy la reenvía tal cual.</p>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(event, 'antigravity')">Antigravity</div>
+                <div class="tab" onclick="switchTab(event, 'openai')">OpenAI / Cursor</div>
+                <div class="tab" onclick="switchTab(event, 'vscode')">VS Code + Extension</div>
+            </div>
+
+            <div id="antigravity" class="tab-content active">
+                <p style="margin-bottom:12px"><strong>Antigravity</strong> tiene un proxy API integrado. Para meter AIP Proxy en medio:</p>
+
+                <p style="margin:10px 0"><strong>Opcion A — Extensiones de IA dentro de Antigravity</strong> (Kilo Code, Continue, Cline, etc.):</p>
+                <ol style="margin-left:20px; color:#ccc; line-height:2.2">
+                    <li>Abre los ajustes de la extension de IA que uses</li>
+                    <li>Busca <code>API Base URL</code> o <code>Base URL</code></li>
+                    <li>Cambia la URL a: <code class="highlight">http://localhost:8090/v1</code></li>
+                    <li>Deja tu API Key igual (el proxy la reenvía tal cual)</li>
+                    <li>Guarda y listo</li>
+                </ol>
+
+                <p style="margin:15px 0 10px"><strong>Opcion B — Proxy integrado de Antigravity</strong> (API Proxy tab):</p>
+                <ol style="margin-left:20px; color:#ccc; line-height:2.2">
+                    <li>Antigravity escucha por defecto en <code>http://127.0.0.1:8045/v1</code></li>
+                    <li>Ve a <strong>Settings</strong> &rarr; <strong>API Proxy</strong></li>
+                    <li>En la configuracion del upstream/provider, cambia la URL del proveedor (ej. Gemini) a: <code class="highlight">http://localhost:8090</code></li>
+                    <li>Asi el flujo queda: <code>Antigravity (:8045) &rarr; AIP Proxy (:8090) &rarr; Gemini API</code></li>
+                    <li>La API Key (<code>sk-antigravity</code>) y tu key de Gemini se mantienen sin cambios</li>
+                </ol>
+
+                <div style="background:#1a1a0e; border:1px solid #555500; border-radius:6px; padding:12px; margin-top:12px">
+                    <strong style="color:#ffcc00">Tip:</strong> <span style="color:#ccc">Si usas Antigravity con Gemini 3 Pro, arranca el proxy asi:</span>
+                    <pre style="margin:8px 0 0"><code>aip-proxy start --target https://generativelanguage.googleapis.com --port 8090</code></pre>
+                    <span style="color:#999">Si usas Claude o GPT dentro de Antigravity, cambia el --target al API correspondiente.</span>
+                </div>
+            </div>
+
+            <div id="openai" class="tab-content">
+                <p style="margin-bottom:12px">Para IDEs que usan la API de OpenAI (Cursor, Windsurf, etc.):</p>
+                <ol style="margin-left:20px; color:#ccc; line-height:2.2">
+                    <li>Arranca el proxy: <code>aip-proxy start --target https://api.openai.com/v1 --port 8090</code></li>
+                    <li>En los ajustes de tu IDE, busca <code>API Base URL</code> o <code>OpenAI Base URL</code></li>
+                    <li>Cambia a: <code class="highlight">http://localhost:8090/v1</code></li>
+                    <li>Tu API Key de OpenAI sigue igual</li>
+                </ol>
+            </div>
+
+            <div id="vscode" class="tab-content">
+                <p style="margin-bottom:12px">Con nuestra extension de VS Code es aun mas facil:</p>
+                <ol style="margin-left:20px; color:#ccc; line-height:2.2">
+                    <li>Descarga <code>aip-proxy-0.1.0.vsix</code> del <a href="https://github.com/iafiscal1212/aip-proxy">repo de GitHub</a></li>
+                    <li>En VS Code / Antigravity: <code>Ctrl+Shift+P</code> &rarr; <code>Install from VSIX</code> &rarr; selecciona el archivo</li>
+                    <li><code>Ctrl+Shift+P</code> &rarr; <code>AIP Proxy: Set Target API</code> &rarr; elige tu proveedor</li>
+                    <li><code>Ctrl+Shift+P</code> &rarr; <code>AIP Proxy: Start Proxy</code></li>
+                    <li>Veras <code style="color:#00d4ff">&#9889; AIP -23%</code> en la barra de estado con el ahorro en tiempo real</li>
+                </ol>
+            </div>
         </div>
 
         <div class="step">
@@ -261,6 +291,7 @@ https://api.openai.com/v1
             <pre><code><span class="comment"># En otra terminal:</span>
 curl http://localhost:8090/health
 curl http://localhost:8090/stats</code></pre>
+            <p style="margin-top:8px; color:#999">Si ves <code>{"status": "ok"}</code>, todo esta correcto. Haz una pregunta en tu IDE y revisa <code>/stats</code> para ver el ahorro.</p>
         </div>
 
         <h2>Opciones avanzadas</h2>
