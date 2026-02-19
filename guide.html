@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIP Proxy — Guía de instalación</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.7;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+        .savings {
+            display: inline-block;
+            background: linear-gradient(135deg, #00d4ff22, #7b2ff722);
+            border: 1px solid #7b2ff744;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin: 20px 0 40px;
+            font-size: 1.3em;
+        }
+        .savings strong {
+            color: #00d4ff;
+            font-size: 1.4em;
+        }
+        h2 {
+            color: #fff;
+            font-size: 1.5em;
+            margin: 40px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+        h3 {
+            color: #ccc;
+            font-size: 1.15em;
+            margin: 25px 0 10px;
+        }
+        .step {
+            background: #111;
+            border-left: 3px solid #7b2ff7;
+            padding: 20px 25px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: #7b2ff7;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+        code {
+            background: #1a1a2e;
+            color: #00d4ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px 20px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            color: #e0e0e0;
+        }
+        .highlight { color: #00d4ff; }
+        .comment { color: #666; }
+        .diagram {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.95em;
+            line-height: 2;
+        }
+        .diagram .arrow { color: #7b2ff7; }
+        .diagram .box {
+            display: inline-block;
+            border: 1px solid #555;
+            padding: 5px 15px;
+            border-radius: 6px;
+            margin: 0 5px;
+        }
+        .diagram .proxy {
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 15px;
+            border-bottom: 1px solid #222;
+        }
+        th { color: #888; font-weight: 600; }
+        .badge {
+            display: inline-block;
+            background: #00d4ff22;
+            color: #00d4ff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+        a { color: #7b2ff7; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+            color: #555;
+            font-size: 0.9em;
+        }
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin: 20px 0 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #111;
+            border: 1px solid #333;
+            cursor: pointer;
+            color: #888;
+            font-size: 0.95em;
+        }
+        .tab:first-child { border-radius: 8px 0 0 0; }
+        .tab:last-child { border-radius: 0 8px 0 0; }
+        .tab.active {
+            background: #1a1a2e;
+            color: #00d4ff;
+            border-bottom-color: #1a1a2e;
+        }
+        .tab-content {
+            display: none;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 20px;
+        }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AIP Proxy</h1>
+        <p class="subtitle">Token compression proxy para APIs de LLM</p>
+
+        <div class="savings">
+            Ahorra <strong>15-40%</strong> en tokens sin perder calidad
+        </div>
+
+        <h2>Como funciona</h2>
+        <div class="diagram">
+            <span class="box">Tu IDE</span>
+            <span class="arrow">&rarr;</span>
+            <span class="box proxy">AIP Proxy (:8090)</span>
+            <span class="arrow">&rarr;</span>
+            <span class="box">OpenAI / Gemini / Claude</span>
+            <br>
+            <small style="color: #666">Comprime tokens al vuelo antes de enviar al modelo</small>
+        </div>
+
+        <table>
+            <tr><th>Nivel</th><th>Que hace</th><th>Ahorro</th></tr>
+            <tr><td><code>1</code></td><td>Normaliza espacios en blanco</td><td><span class="badge">5-10%</span></td></tr>
+            <tr><td><code>2</code></td><td>+ Comprime codigo + deduplica bloques</td><td><span class="badge">15-25%</span></td></tr>
+            <tr><td><code>3</code></td><td>+ Abrevia patrones verbosos</td><td><span class="badge">25-40%</span></td></tr>
+        </table>
+
+        <h2>Instalacion</h2>
+
+        <div class="step">
+            <span class="step-number">1</span> <strong>Instala Python 3.9+</strong>
+            <p style="margin-top:8px; color:#999">Si ya tienes Python instalado, salta este paso.</p>
+            <pre><code><span class="comment"># Windows: descarga de python.org</span>
+<span class="comment"># macOS:</span>
+brew install python
+
+<span class="comment"># Linux:</span>
+sudo apt install python3 python3-pip</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span> <strong>Instala AIP Proxy</strong>
+            <pre><code>pip install aip-proxy</code></pre>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span> <strong>Arranca el proxy</strong>
+
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab(event, 'antigravity')">Antigravity</div>
+                <div class="tab" onclick="switchTab(event, 'openai')">OpenAI</div>
+                <div class="tab" onclick="switchTab(event, 'gemini')">Gemini</div>
+                <div class="tab" onclick="switchTab(event, 'cursor')">Cursor</div>
+            </div>
+
+            <div id="antigravity" class="tab-content active">
+                <pre><code>aip-proxy start --target https://generativelanguage.googleapis.com --port 8090</code></pre>
+                <p style="margin-top:10px; color:#999">Antigravity usa la API de Gemini por defecto.</p>
+            </div>
+            <div id="openai" class="tab-content">
+                <pre><code>aip-proxy start --target https://api.openai.com/v1 --port 8090</code></pre>
+            </div>
+            <div id="gemini" class="tab-content">
+                <pre><code>aip-proxy start --target https://generativelanguage.googleapis.com --port 8090</code></pre>
+            </div>
+            <div id="cursor" class="tab-content">
+                <pre><code>aip-proxy start --target https://api.openai.com/v1 --port 8090</code></pre>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span> <strong>Configura tu IDE</strong>
+            <p style="margin-top:8px">Cambia la URL del API en los ajustes de tu IDE:</p>
+            <pre><code><span class="comment"># En vez de:</span>
+https://api.openai.com/v1
+
+<span class="comment"># Pon:</span>
+<span class="highlight">http://localhost:8090/v1</span></code></pre>
+            <p style="margin-top:8px; color:#999">Tu API key sigue igual, el proxy la reenvía tal cual.</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">5</span> <strong>Verifica que funciona</strong>
+            <pre><code><span class="comment"># En otra terminal:</span>
+curl http://localhost:8090/health
+curl http://localhost:8090/stats</code></pre>
+        </div>
+
+        <h2>Opciones avanzadas</h2>
+
+        <pre><code><span class="comment"># Compresion agresiva (maximo ahorro)</span>
+aip-proxy start --target URL --level 3
+
+<span class="comment"># Sin cache</span>
+aip-proxy start --target URL --no-cache
+
+<span class="comment"># Accesible desde red local</span>
+aip-proxy start --target URL --host 0.0.0.0 --port 8090</code></pre>
+
+        <h2>Usar como libreria Python</h2>
+
+        <pre><code><span class="highlight">from</span> aip_proxy <span class="highlight">import</span> TokenCompressor
+
+tc = TokenCompressor(level=2)
+messages = [
+    {"role": "user", "content": "tu prompt largo aqui..."}
+]
+compressed = tc.compress_messages(messages)
+print(tc.get_savings())
+<span class="comment"># {'savings_pct': 26.7, 'saved_chars': 400, ...}</span></code></pre>
+
+        <h2>FAQ</h2>
+
+        <h3>Pierde calidad la respuesta del modelo?</h3>
+        <p>No. La compresion elimina informacion redundante (espacios extra, comentarios en codigo, bloques duplicados) que el modelo no necesita para generar su respuesta.</p>
+
+        <h3>Es seguro con mi API key?</h3>
+        <p>Si. El proxy corre <strong>en tu maquina local</strong> (localhost). Tu API key nunca sale de tu equipo salvo hacia el API oficial.</p>
+
+        <h3>Funciona con streaming?</h3>
+        <p>Si. Las respuestas en streaming se reenvían directamente sin modificar.</p>
+
+        <h3>Cuanto ahorro voy a ver?</h3>
+        <p>Depende de tu uso. En sesiones de coding tipicas con contexto largo, nivel 2 ahorra 15-25%. Puedes ver tus ahorros en tiempo real en <code>http://localhost:8090/stats</code>.</p>
+
+        <div class="footer">
+            <p>AIP Proxy v0.1.0 &mdash; MIT License &mdash; <a href="https://github.com/iafiscal1212/aip-proxy">GitHub</a> &mdash; <a href="https://pypi.org/project/aip-proxy/">PyPI</a></p>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(e, id) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+    </script>
+</body>
+</html>

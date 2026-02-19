@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aip-proxy"
+version = "0.1.0"
+description = "AIP Proxy — Token compression proxy for LLM APIs. Reduce costs 15-40% on any AI IDE (Antigravity, Cursor, VS Code, etc.)"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Carmen Esteban"},
+]
+keywords = [
+    "llm-proxy", "token-compression", "ai-cost-reduction",
+    "openai-proxy", "antigravity", "cursor", "vscode",
+    "aip-engine", "prompt-optimization",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "fastapi>=0.100",
+    "uvicorn>=0.20",
+    "httpx>=0.24",
+    "tiktoken>=0.5",
+]
+
+[project.urls]
+Homepage = "https://github.com/iafiscal1212/aip-proxy"
+Repository = "https://github.com/iafiscal1212/aip-proxy"
+
+[project.scripts]
+aip-proxy = "aip_proxy.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["aip_proxy", "aip_proxy.*"]
