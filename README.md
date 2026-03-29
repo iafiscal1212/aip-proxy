@@ -108,4 +108,4 @@ AIP Proxy removes this noise while preserving the semantic content the model nee
 
 ## License
 
-MIT
+Copyright (c) 2024-2026 Carmen Esteban. All rights reserved. No part of this software may be copied, modified, distributed or used without express written permission.
