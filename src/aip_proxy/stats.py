@@ -48,7 +48,7 @@ class StatsTracker:
 
         chat_reqs = [
             r for r in self._requests
-            if "chat/completions" in r.get("path", "") or r.get("path", "").split("?")[0].endswith("/messages")
+            if r.get("path", "").split("?")[0].endswith(("/chat/completions", "/messages"))
         ]
         cached = sum(1 for r in self._requests if r["cached"])
         streamed = sum(1 for r in self._requests if r["streamed"])
