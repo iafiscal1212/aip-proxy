@@ -100,7 +100,10 @@ def create_app(
 
                 # Anthropic-specific: compress top-level "system" string
                 if "system" in data and isinstance(data["system"], str):
-                    data["system"] = compressor._compress_text(data["system"])
+                    original_system = data["system"]
+                    data["system"] = compressor._compress_text(original_system)
+                    compressor.stats["original_chars"] += len(original_system)
+                    compressor.stats["compressed_chars"] += len(data["system"])
 
                 body = json.dumps(data).encode()
 
