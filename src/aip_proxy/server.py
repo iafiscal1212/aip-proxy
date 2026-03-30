@@ -73,7 +73,7 @@ def create_app(
             headers.pop(h, None)
 
         is_chat = (
-            path.endswith("/chat/completions") or path.split("?")[0].endswith("/messages")
+            path.split("?")[0].endswith(("/chat/completions", "/messages"))
         ) and request.method == "POST"
         is_streaming = False
         original_body = body
