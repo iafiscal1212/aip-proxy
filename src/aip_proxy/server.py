@@ -72,7 +72,9 @@ def create_app(
         for h in ["host", "content-length", "transfer-encoding"]:
             headers.pop(h, None)
 
-        is_chat = path.endswith("/chat/completions") and request.method == "POST"
+        is_chat = (
+            path.split("?")[0].endswith(("/chat/completions", "/messages"))
+        ) and request.method == "POST"
         is_streaming = False
         original_body = body
 
@@ -92,10 +94,18 @@ def create_app(
                         )
                         return JSONResponse(content=cached)
 
-                # Compress messages
+                # Compress messages (OpenAI + Anthropic share this field)
                 if "messages" in data:
                     data["messages"] = compressor.compress_messages(data["messages"])
-                    body = json.dumps(data).encode()
+
+                # Anthropic-specific: compress top-level "system" string
+                if "system" in data and isinstance(data["system"], str):
+                    original_system = data["system"]
+                    data["system"] = compressor._compress_text(original_system)
+                    compressor.stats["original_chars"] += len(original_system)
+                    compressor.stats["compressed_chars"] += len(data["system"])
+
+                body = json.dumps(data).encode()
 
             except (json.JSONDecodeError, KeyError):
                 pass  # Forward as-is if not valid JSON
